@@ -25,7 +25,7 @@
 						<ImageBrush ImageSource="/MoveFiles;component/Res/Images/hourglass.png"/>
 					</Button.Background>
 				</Button>
-				<TextBox x:Name="tbCheckFolderPeriod"  Height="30" Width="200" TextWrapping="Wrap"  VerticalContentAlignment="Center"/>
+				<TextBox x:Name="tbCheckFolderPeriod"  Height="30" Width="200" TextWrapping="Wrap"  VerticalContentAlignment="Center" />
 			</StackPanel>
 
 			<Label x:Name="labelFolderOrigin" Margin="20,0,16,0" HorizontalContentAlignment="Left" Content="Folder Origin" Foreground="#FFCCCCCC" FontWeight="Normal" FontSize="12"/>
@@ -38,9 +38,9 @@
 				<TextBox x:Name="tbFolderOrigin"  Height="30" Width="200" TextWrapping="Wrap"  VerticalContentAlignment="Center"/>
 			</StackPanel>
 
-			<Label x:Name="labelFolderDestination" Margin="20,0,16,0" HorizontalContentAlignment="Left" Content="Folder Origin" Foreground="#FFCCCCCC" FontWeight="Normal" FontSize="12"/>
+			<Label x:Name="labelFolderDestination" Margin="20,0,16,0" HorizontalContentAlignment="Left" Content="Folder Destination" Foreground="#FFCCCCCC" FontWeight="Normal" FontSize="12"/>
 			<StackPanel Orientation="Horizontal" Margin="22,0,22,8">
-				<Button x:Name="btnFolderDestination" Margin="0,0,8,0"  Height="32" HorizontalAlignment="Center" Width="32">
+				<Button x:Name="btnFolderDestination" Margin="0,0,8,0"  Height="32" HorizontalAlignment="Center" Width="32" Click="btnFolderDestination_Click">
 					<Button.Background>
 						<ImageBrush ImageSource="/MoveFiles;component/Res/Images/folder.png"/>
 					</Button.Background>
@@ -49,7 +49,7 @@
 			</StackPanel>
 
 
-			<Button x:Name="btnStart" Margin="0,20"  Height="43" HorizontalAlignment="Center" Width="234" Style="{DynamicResource StartMenuButtons}" Cursor="Hand">
+			<Button x:Name="btnStart" Margin="0,20"  Height="43" HorizontalAlignment="Center" Width="234" Style="{DynamicResource StartMenuButtons}" Cursor="Hand" Click="btnStart_Click">
 				<Button.Background>
 					<ImageBrush ImageSource="/MoveFiles;component/Res/Images/butonStart.png"/>
 				</Button.Background>
