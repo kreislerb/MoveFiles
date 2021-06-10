@@ -24,5 +24,10 @@ namespace MoveFiles
         {
             InitializeComponent();
         }
+
+        private void btnFolderOrigin_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
