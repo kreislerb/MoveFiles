@@ -53,14 +53,20 @@ namespace MoveFiles.Controllers
                 return;
             }
 
+
+           
             foreach (var file_found in list_files_found) {
+
 
                 var fileMoved = new FileMoved()
                 {
-                    FileName = file_found,
+                    FileName = file_found.Substring(Origin.Length+1),
                     FileSize = Utils.GetFileSizeOnDisk(file_found),
                     MovedTime = DateTime.Now
                 };
+
+                SendFileToDestination(fileMoved.FileName);
+
 
 
             }
@@ -70,19 +76,18 @@ namespace MoveFiles.Controllers
 
 
 
-        public void SendFileToDestination(string filepath)
+        private void SendFileToDestination(string filename)
         {
             try
             {
-
-               
+                var originFilePath = Origin + "\\" + filename;
+                var destinationFilePath = Destination + "\\" + filename;
+                File.Move(originFilePath, destinationFilePath);
 
             }
-           
-
             catch (FileNotFoundException err)
             {
-                Utils.ShowMessage("O arquivo \"" + filepath + " não foi encontrado!",
+                Utils.ShowMessage("O arquivo \"" + filename + " não foi encontrado!",
                  "Falha ao enviar");
             }
             catch (ArgumentNullException err)
@@ -112,13 +117,13 @@ namespace MoveFiles.Controllers
             }
             catch (NotSupportedException err)
             {
-                Utils.ShowMessage("O nome do diretório ou arquivo \""+ filepath +"\" não é válido!" ,
+                Utils.ShowMessage("O nome do diretório ou arquivo \""+ filename + "\" não é válido!" ,
           "Falha ao enviar");
             }
 
             catch (IOException err)
             {
-                Utils.ShowMessage("O arquivo \"" + filepath + " Já existe no diretório de destino",
+                Utils.ShowMessage("O arquivo \"" + filename + " Já existe no diretório de destino",
                    "Falha ao enviar");
             }
 
