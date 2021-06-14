@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MoveFiles"
         mc:Ignorable="d"
-        Title="Move Files" Height="638" Width="800" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        Title="Move Files" Height="450" Width="800" WindowStartupLocation="CenterScreen" WindowState="Maximized">
 	<Grid>
 		<StackPanel HorizontalAlignment="Left" Background="#484848" Width="284"  VerticalAlignment="Stretch">
 			<Label x:Name="label" HorizontalContentAlignment="Center" Content="Move Files" Foreground="#FFCCCCCC" FontWeight="Bold" FontSize="26"/>

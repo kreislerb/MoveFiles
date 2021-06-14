@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -59,6 +60,8 @@ namespace MoveFiles.Controllers
 
 
 
+        
+
 
         #region CONTROLE_PROCSSO
         private void Process(Object source, System.Timers.ElapsedEventArgs e)
@@ -103,11 +106,15 @@ namespace MoveFiles.Controllers
 
                 try
                 {
-                    //Move arquivo para pasta de destino
-                    SendFileToDestination(fileMoved.FileName);
+                    //FilterByRegex
+                    if (!FilterByRegex(fileMoved))
+                    {
+                        //Move arquivo para pasta de destino
+                        SendFileToDestination(fileMoved.FileName);
 
-                    // Insere o arquivo no pacote de log
-                    packet.InsertFileMove(fileMoved);
+                        // Insere o arquivo no pacote de log
+                        packet.InsertFileMove(fileMoved);
+                    }
 
                 }
                 catch (Exception err)
@@ -134,6 +141,28 @@ namespace MoveFiles.Controllers
         #endregion
 
 
+        private bool FilterByRegex(FileMoved file)
+        {
+            if (string.IsNullOrEmpty(Regex))
+                return false;
+            
+            try
+            {
+
+            
+            Regex reg = new Regex(Regex);
+            if (reg.IsMatch(file.FileName))
+            {
+                return false;
+            }
+            return true;
+            }
+
+            catch (ArgumentException err)
+            {
+                throw new ArgumentException("Regex Inválido!");
+            }
+        }
 
 
         #region MOVER_ARQUIVOS
@@ -188,7 +217,7 @@ namespace MoveFiles.Controllers
         private bool ValidateForm()
         {
             // Validar campos nulos
-            if (string.IsNullOrEmpty(Regex) || string.IsNullOrEmpty(Origin) || string.IsNullOrEmpty(Destination))
+            if (string.IsNullOrEmpty(Origin) || string.IsNullOrEmpty(Destination))
                 return false;
 
             // Validar CheckTime
