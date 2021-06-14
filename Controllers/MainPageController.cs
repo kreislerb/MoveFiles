@@ -1,4 +1,5 @@
 ﻿using MoveFiles.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,14 +18,16 @@ namespace MoveFiles.Controllers
         private string Destination { get; set; }
         private long CheckTime { get; set; }
 
+        private LogFile Log { get; set;}
+
         public MainPageController(string regex, string origin, string destination, long checktime)
         {
             Regex = regex;
             Origin = origin;
             Destination = destination;
             CheckTime = checktime;
+            InitLogFile();
         }
-
 
 
         public void StartProcess()
@@ -37,6 +40,7 @@ namespace MoveFiles.Controllers
                     "Formulário inválido");
                 return;
             }
+
 
 
             string[] list_files_found;
@@ -54,9 +58,9 @@ namespace MoveFiles.Controllers
             }
 
 
+            var packet = new PacketFilesMoved(Origin, Destination);
            
             foreach (var file_found in list_files_found) {
-
 
                 var fileMoved = new FileMoved()
                 {
@@ -65,15 +69,81 @@ namespace MoveFiles.Controllers
                     MovedTime = DateTime.Now
                 };
 
-                SendFileToDestination(fileMoved.FileName);
+                try
+                {
+                    //Move arquivo para pasta de destino
+                    SendFileToDestination(fileMoved.FileName);
 
+                    // Insere o arquivo no pacote de log
+                    packet.InsertFileMove(fileMoved);
 
-
+                }
+                catch (Exception err)
+                {
+                    Utils.ShowMessage(err.Message, "Falha ao mover arquivo");
+                    return;
+                }
             }
+
+
+            Log.InsertPacketFilesMoved(packet);
+
+            if(Log.CountPackets > 0)
+            {
+                Upsert();
+            }
+            
+
 
 
         }
 
+      
+
+
+        private void InitLogFile()
+        {
+            // Cria o Objeto de Log
+            Log = new LogFile();
+
+            // Carrega o arquivo de log e converte para o Objeto
+            Load();
+
+           
+        }
+
+
+        public void Load()
+        {
+            try
+            {
+                using (StreamReader r = new StreamReader(@"C:\LogFile.json"))
+                {
+                    string json = r.ReadToEnd();
+                    Log = JsonConvert.DeserializeObject<LogFile>(json);
+                }
+            }
+            catch (Exception err)
+            {
+                Upsert();
+            }
+
+        }
+
+
+        public void Upsert()
+        {
+
+            //open file stream
+            using (StreamWriter file = File.CreateText(@"C:\LogFile.json"))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+
+                //serialize object directly into file stream
+                serializer.Serialize(file, Log);
+            }
+
+        }
 
 
         private void SendFileToDestination(string filename)
@@ -87,44 +157,36 @@ namespace MoveFiles.Controllers
             }
             catch (FileNotFoundException err)
             {
-                Utils.ShowMessage("O arquivo \"" + filename + " não foi encontrado!",
-                 "Falha ao enviar");
+                throw new FileNotFoundException("O arquivo \"" + filename + " não foi encontrado!");
             }
             catch (ArgumentNullException err)
             {
-                Utils.ShowMessage("O diretório de origem ou destino não foram informados!",
-                "Falha ao enviar");
+                throw new ArgumentNullException("O diretório de origem ou destino não foram informados!");
             }
             catch (ArgumentException err)
             {
-                Utils.ShowMessage("O diretório de origem ou destino não foram informados!",
-               "Falha ao enviar");
+                throw new ArgumentException("O diretório de origem ou destino não foram informados!");
             }
             catch (UnauthorizedAccessException err)
             {
-                Utils.ShowMessage("É necessário ter permissão do Administrador para realizar esta operação!",
-             "Falha ao enviar");
+                throw new UnauthorizedAccessException("É necessário ter permissão do Administrador para realizar esta operação!");
             }
             catch (PathTooLongException err)
             {
-                Utils.ShowMessage(err.Message,
-            "Falha ao enviar");
+                throw new PathTooLongException(err.Message);
             }
             catch (DirectoryNotFoundException err)
             {
-                Utils.ShowMessage("Diretório informado é inválido!",
-            "Falha ao enviar");
+                throw new DirectoryNotFoundException("Diretório informado é inválido!");
             }
             catch (NotSupportedException err)
             {
-                Utils.ShowMessage("O nome do diretório ou arquivo \""+ filename + "\" não é válido!" ,
-          "Falha ao enviar");
+                throw new NotSupportedException("O nome do diretório ou arquivo \"" + filename + "\" não é válido!");
             }
 
             catch (IOException err)
             {
-                Utils.ShowMessage("O arquivo \"" + filename + " Já existe no diretório de destino",
-                   "Falha ao enviar");
+                throw new IOException("O arquivo \"" + filename + " Já existe no diretório de destino");
             }
 
         }
