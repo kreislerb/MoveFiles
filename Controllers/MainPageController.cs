@@ -4,8 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
+
 using System.Windows.Forms;
 
 namespace MoveFiles.Controllers
@@ -19,29 +22,57 @@ namespace MoveFiles.Controllers
         private long CheckTime { get; set; }
 
         private LogFile Log { get; set;}
+        System.Timers.Timer timer;
+        
+        public MainPageController()
+        {
 
-        public MainPageController(string regex, string origin, string destination, long checktime)
+          
+            timer = new System.Timers.Timer();
+            timer.Elapsed += Process;
+            timer.AutoReset = true;
+            timer.Enabled = false;
+            
+        }
+
+
+        public void UpdateInputsUser(string regex, string origin, string destination, long checktime)
         {
             Regex = regex;
             Origin = origin;
             Destination = destination;
             CheckTime = checktime;
-            InitLogFile();
+            timer.Interval = CheckTime * 1000;
         }
 
 
-        public void StartProcess()
+
+        public void Start()
         {
+            timer.Start();
+            
+        }
+        public void Stop()
+        {
+            timer.Stop();
+        }
+
+
+
+
+        #region CONTROLE_PROCSSO
+        private void Process(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            InitLogFile();
 
             // Se formulário é invalido, informar usuário
             if (!ValidateForm())
             {
                 Utils.ShowMessage("Existem entradas inválidas ou nulas no formulário",
                     "Formulário inválido");
+                Stop();
                 return;
             }
-
-
 
             string[] list_files_found;
 
@@ -54,6 +85,7 @@ namespace MoveFiles.Controllers
 
                 Utils.ShowMessage("Diretório de origem não é válido!",
                     "Formulário inválido");
+                Stop();
                 return;
             }
 
@@ -81,70 +113,30 @@ namespace MoveFiles.Controllers
                 catch (Exception err)
                 {
                     Utils.ShowMessage(err.Message, "Falha ao mover arquivo");
+                    Stop();
                     return;
                 }
             }
 
 
+
+            // Insere na o pacote de dados de log na lista e salva
             Log.InsertPacketFilesMoved(packet);
 
-            if(Log.CountPackets > 0)
+            if(list_files_found.Length> 0)
             {
                 Upsert();
             }
             
-
-
-
-        }
-
-      
-
-
-        private void InitLogFile()
-        {
-            // Cria o Objeto de Log
-            Log = new LogFile();
-
-            // Carrega o arquivo de log e converte para o Objeto
-            Load();
-
-           
         }
 
 
-        public void Load()
-        {
-            try
-            {
-                using (StreamReader r = new StreamReader(@"C:\LogFile.json"))
-                {
-                    string json = r.ReadToEnd();
-                    Log = JsonConvert.DeserializeObject<LogFile>(json);
-                }
-            }
-            catch (Exception err)
-            {
-                Upsert();
-            }
-
-        }
+        #endregion
 
 
-        public void Upsert()
-        {
 
-            //open file stream
-            using (StreamWriter file = File.CreateText(@"C:\LogFile.json"))
-            {
-                JsonSerializer serializer = new JsonSerializer();
 
-                //serialize object directly into file stream
-                serializer.Serialize(file, Log);
-            }
-
-        }
-
+        #region MOVER_ARQUIVOS
 
         private void SendFileToDestination(string filename)
         {
@@ -190,9 +182,9 @@ namespace MoveFiles.Controllers
             }
 
         }
+        #endregion
 
-
-
+        #region VALIDAÇÃO
         private bool ValidateForm()
         {
             // Validar campos nulos
@@ -208,6 +200,63 @@ namespace MoveFiles.Controllers
             return true;
         }
 
+        #endregion
+
+        #region LOG_FILE
+
+
+        private void InitLogFile()
+        {
+            // Cria o Objeto de Log
+            Log = new LogFile();
+
+            // Carrega o arquivo de log e converte para o Objeto
+            Load();
+        }
+
+        public void Load()
+        {
+            try
+            {
+                using (StreamReader r = new StreamReader(@"C:\LogFile.json"))
+                {
+                    string json = r.ReadToEnd();
+                    Log = JsonConvert.DeserializeObject<LogFile>(json);
+                }
+            }
+            catch (Exception err)
+            {
+                
+            }
+
+        }
+
+
+        public void Upsert()
+        {
+            try
+            {
+                using (StreamWriter file = File.CreateText(@"C:\LogFile.json"))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+
+                    //serialize object directly into file stream
+                    serializer.Serialize(file, Log);
+                }
+            }
+            catch (IOException e)
+            {
+                var errorCode = Marshal.GetHRForException(e) & ((1 << 16) - 1);
+                bool arquivoEmUso = errorCode == 32 || errorCode == 33;
+            }
+
+            
+           
+
+        }
+
+
+        #endregion
 
 
 
