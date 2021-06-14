@@ -15,7 +15,16 @@ namespace MoveFiles
         public MainWindow()
         {
             InitializeComponent();
+
+
+              
+
+            controller = new MainPageController();
         }
+
+        bool ProcesStarted = false;
+        private MainPageController controller;
+
 
         private void btnFolderOrigin_Click(object sender, RoutedEventArgs e)
         {
@@ -50,6 +59,7 @@ namespace MoveFiles
 
         private void btnStart_Click(object sender, RoutedEventArgs e)
         {
+
             long checktime = 0;
             try
             {
@@ -59,9 +69,22 @@ namespace MoveFiles
             {
                 checktime = 0;
             }
+
+            controller.UpdateInputsUser(tbRegex.Text, tbFolderOrigin.Text, tbFolderDestination.Text, checktime);
             
-            var controller = new MainPageController(tbRegex.Text, tbFolderOrigin.Text, tbFolderDestination.Text, checktime);
-            controller.StartProcess();
+            if (ProcesStarted)
+            {
+                controller.Stop();
+                ProcesStarted = false;
+            }
+            else
+            {
+                controller.Start();
+                ProcesStarted = true;
+            }
+
+           
+           
 
         }
 
