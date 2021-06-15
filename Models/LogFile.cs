@@ -11,10 +11,10 @@ namespace MoveFiles.Models
     public class LogFile
     {
         [JsonProperty]
-        private List<PacketFilesMoved> ListPackets { get; set;}
+        public List<PacketFilesMoved> ListPackets { get; set;}
         [JsonIgnore]
         public int CountPackets => ListPackets.Count;
-
+    
 
         public LogFile()
         {

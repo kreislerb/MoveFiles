@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -33,6 +34,7 @@ namespace MoveFiles.Controllers
             timer.Elapsed += Process;
             timer.AutoReset = true;
             timer.Enabled = false;
+
             
         }
 
@@ -67,6 +69,11 @@ namespace MoveFiles.Controllers
         private void Process(Object source, System.Timers.ElapsedEventArgs e)
         {
             InitLogFile();
+            var statistics = new LogStatistics(Log);
+            Debug.WriteLine("Quantidade total de arquivos transferidos: " + statistics.TotalFilesTransfer);
+            Debug.WriteLine("Quantidade total de arquivos transferidos (MB): " + statistics.TotalFileSizeTransfer);
+            statistics.TotalWeightByExtensions();
+            statistics.TotalWeightByHour();
 
             // Se formulário é invalido, informar usuário
             if (!ValidateForm())
@@ -114,6 +121,7 @@ namespace MoveFiles.Controllers
 
                         // Insere o arquivo no pacote de log
                         packet.InsertFileMove(fileMoved);
+                        
                     }
 
                 }
@@ -123,10 +131,11 @@ namespace MoveFiles.Controllers
                     Stop();
                     return;
                 }
+
             }
 
 
-
+            
             // Insere na o pacote de dados de log na lista e salva
             Log.InsertPacketFilesMoved(packet);
 

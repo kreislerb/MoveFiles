@@ -71,6 +71,7 @@
     <Compile Include="Controllers\MainPageController.cs" />
     <Compile Include="Models\FileMoved.cs" />
     <Compile Include="Models\LogFile.cs" />
+    <Compile Include="Models\LogStatistics.cs" />
     <Compile Include="Models\PacketFilesMoved.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
