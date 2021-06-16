@@ -1,12 +1,11 @@
 ﻿using MoveFiles.Controllers;
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
-
+using System.Windows.Media;
 
 namespace MoveFiles
 {
@@ -82,11 +81,19 @@ namespace MoveFiles
             if (ProcesStarted)
             {
                 controller.Stop();
+                btnStart.Content = "START";
+                var converter = new System.Windows.Media.BrushConverter();
+                var brush = (Brush)converter.ConvertFromString("#FFFF7600");
+                btnStart.Background = brush;
                 ProcesStarted = false;
             }
             else
             {
                 controller.Start();
+                btnStart.Content = "STOP";
+                var converter = new System.Windows.Media.BrushConverter();
+                var brush = (Brush)converter.ConvertFromString("#DDFF0000");
+                btnStart.Background = brush;
                 ProcesStarted = true;
             }
 

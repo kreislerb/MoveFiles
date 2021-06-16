@@ -23,13 +23,17 @@ namespace MoveFiles.Controllers
     public class MainPageController : INotifyPropertyChanged
     {
 
+        #region User_Properties
         private string Regex { get; set; }
         private string Origin { get; set; }
         private string Destination { get; set; }
         private long CheckTime { get; set; }
+        #endregion
 
+        #region System_Properties
         private LogFile Log { get; set;}
         System.Timers.Timer timer;
+        #endregion
 
         #region Dashboard_Properties
         private int _quantidadeTransferida { get; set; }
@@ -114,6 +118,10 @@ namespace MoveFiles.Controllers
 
         #endregion
 
+
+        /// <summary>
+        /// Evento criado para facilitar a transição das propriedades para a VIew
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -123,6 +131,7 @@ namespace MoveFiles.Controllers
 
         public MainPageController()
         {
+            // Configuração do Timer, para repetição contínua do processo
             timer = new System.Timers.Timer();
             timer.Elapsed += Process;
             timer.AutoReset = true;
@@ -130,7 +139,9 @@ namespace MoveFiles.Controllers
         }
 
 
-
+        /// <summary>
+        /// Atualiza o grafico de Pizza. Mostra a quantidade total de arquivos transferidos classificados por tipo (extensao do arquivo).
+        /// </summary>
         private void UpdatePieChart()
         {
             var series = new SeriesCollection();
@@ -155,6 +166,10 @@ namespace MoveFiles.Controllers
         }
 
 
+
+        /// <summary>
+        /// Atualiza o grafico de colunas. Mostra a quantidade total de arquivos transferidos por slot de hora.
+        /// </summary>
         private void UpdateColumnChart()
         {
             var series = new SeriesCollection();
@@ -193,6 +208,13 @@ namespace MoveFiles.Controllers
         }
 
 
+        /// <summary>
+        /// Atualiza os parâmetros de entrada do usuário na classe atual
+        /// </summary>
+        /// <param name="regex"></param>
+        /// <param name="origin"></param>
+        /// <param name="destination"></param>
+        /// <param name="checktime"></param>
         public void UpdateInputsUser(string regex, string origin, string destination, long checktime)
         {
             Regex = regex;
@@ -204,22 +226,29 @@ namespace MoveFiles.Controllers
 
 
 
+        /// <summary>
+        /// Inicializa o Processo
+        /// </summary>
         public void Start()
         {
             timer.Start();
             
         }
+
+        /// <summary>
+        /// Para o processo
+        /// </summary>
         public void Stop()
         {
             timer.Stop();
         }
 
 
-
-        #region CONTROLE_PROCSSO
-        private void Process(Object source, System.Timers.ElapsedEventArgs e)
+        /// <summary>
+        /// Atualiza todos os gráficos e informações contidas na área de dashboards
+        /// </summary>
+        private void UpdateDashboard()
         {
-            InitLogFile();
             var statistics = new LogStatistics(Log);
             Debug.WriteLine("Quantidade total de arquivos transferidos: " + statistics.TotalFilesTransfer);
             Debug.WriteLine("Quantidade total de arquivos transferidos (MB): " + statistics.TotalFileSizeTransfer);
@@ -228,20 +257,35 @@ namespace MoveFiles.Controllers
             UpdateColumnChart();
             QuantidadeTransferida = statistics.TotalFilesTransfer;
             QuantidadeTransferidaMbytes = statistics.TotalFileSizeTransfer;
+        }
 
+
+        #region CONTROLE_PROCSSO
+        /// <summary>
+        /// Responsável por controlar todo o fluxo do processo
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
+        private void Process(Object source, System.Timers.ElapsedEventArgs e)
+        {
+            InitLogFile();
+            UpdateDashboard();
 
             // Se formulário é invalido, informar usuário
             if (!ValidateForm())
             {
                 Utils.ShowMessage("Existem entradas inválidas ou nulas no formulário",
                     "Formulário inválido");
+                // Para o Processo
                 Stop();
                 return;
             }
 
             string[] list_files_found;
 
+
             // Validar diretorio de origem
+
             try
             {
                 list_files_found = Directory.GetFiles(Origin);
@@ -250,15 +294,20 @@ namespace MoveFiles.Controllers
 
                 Utils.ShowMessage("Diretório de origem não é válido!",
                     "Formulário inválido");
+                // Para o processo
                 Stop();
                 return;
             }
 
 
+            // Inicializa um novo pacote de arquivos a serem movidos (LOG)
             var packet = new PacketFilesMoved(Origin, Destination);
            
+
             foreach (var file_found in list_files_found) {
 
+
+                // Cria um objeto contendo as principais informaçoes do arquivo (LOG)
                 var fileMoved = new FileMoved()
                 {
                     FileName = file_found.Substring(Origin.Length+1),
@@ -268,7 +317,7 @@ namespace MoveFiles.Controllers
 
                 try
                 {
-                    //FilterByRegex
+                    //Filtra os filenames dado o input de regex do usuario
                     if (!FilterByRegex(fileMoved))
                     {
                         //Move arquivo para pasta de destino
@@ -283,14 +332,13 @@ namespace MoveFiles.Controllers
                 catch (Exception err)
                 {
                     Utils.ShowMessage(err.Message, "Falha ao mover arquivo");
+                    // Para o processo
                     Stop();
                     return;
                 }
 
             }
 
-
-            
             // Insere na o pacote de dados de log na lista e salva
             Log.InsertPacketFilesMoved(packet);
 
@@ -304,7 +352,14 @@ namespace MoveFiles.Controllers
 
         #endregion
 
-
+        /// <summary>
+        /// Verifica se o nome do @file será filtrado pela entrada do regex
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns>
+        /// True -> O arquivo será filtrado;
+        /// False-> O arquivo não será filtrado;
+        /// </returns>
         private bool FilterByRegex(FileMoved file)
         {
             if (string.IsNullOrEmpty(Regex))
@@ -330,7 +385,10 @@ namespace MoveFiles.Controllers
 
 
         #region MOVER_ARQUIVOS
-
+        /// <summary>
+        /// Controla a transferência do arquivo
+        /// </summary>
+        /// <param name="filename"></param>
         private void SendFileToDestination(string filename)
         {
             try
@@ -378,6 +436,13 @@ namespace MoveFiles.Controllers
         #endregion
 
         #region VALIDAÇÃO
+        /// <summary>
+        /// Valida a entrada de dados do usuário
+        /// </summary>
+        /// <returns>
+        /// @False -> Inválido
+        /// @True -> Válido
+        /// </returns>
         private bool ValidateForm()
         {
             // Validar campos nulos
@@ -398,6 +463,9 @@ namespace MoveFiles.Controllers
         #region LOG_FILE
 
 
+        /// <summary>
+        /// Inicializa o arquivo de Log
+        /// </summary>
         private void InitLogFile()
         {
             // Cria o Objeto de Log
@@ -407,6 +475,10 @@ namespace MoveFiles.Controllers
             Load();
         }
 
+
+        /// <summary>
+        /// Converte o arquivo de Log para o obejto de Log
+        /// </summary>
         public void Load()
         {
             try
@@ -424,7 +496,9 @@ namespace MoveFiles.Controllers
 
         }
 
-
+        /// <summary>
+        /// Atualiza o arquivo de LOG
+        /// </summary>
         public void Upsert()
         {
             try
@@ -450,9 +524,6 @@ namespace MoveFiles.Controllers
 
 
         #endregion
-
-
-      
 
 
 
