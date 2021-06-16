@@ -18,6 +18,8 @@ namespace MoveFiles
         public MainWindow()
         {
             InitializeComponent();
+            LoadConfigs();
+
             controller = new MainPageController();
             this.DataContext = controller;
         }
@@ -93,6 +95,29 @@ namespace MoveFiles
 
         }
 
-       
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            SaveConfigs();
+        }
+
+        public void SaveConfigs()
+        {
+            Properties.Settings.Default.regex = tbRegex.Text;
+            Properties.Settings.Default.check_period = tbCheckFolderPeriod.Text;
+            Properties.Settings.Default.origin = tbFolderOrigin.Text;
+            Properties.Settings.Default.destination = tbFolderDestination.Text;
+
+            Properties.Settings.Default.Save();
+        }
+
+
+        public void LoadConfigs()
+        {
+            tbRegex.Text = Properties.Settings.Default.regex;
+            tbCheckFolderPeriod.Text = Properties.Settings.Default.check_period;
+            tbFolderOrigin.Text = Properties.Settings.Default.origin;
+            tbFolderDestination.Text = Properties.Settings.Default.destination;
+        }
+
     }
 }

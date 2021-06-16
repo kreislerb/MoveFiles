@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MoveFiles"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
-        Title="Move Files" Height="578.9" Width="1037.25" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        Title="Move Files" Height="578.9" Width="1037.25" WindowStartupLocation="CenterScreen" WindowState="Maximized" Closing="Window_Closing">
     <Grid>
 
         <StackPanel Grid.Column="0" HorizontalAlignment="Left" Background="#484848" Width="284"  VerticalAlignment="Stretch">

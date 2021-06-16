@@ -114,6 +114,23 @@ namespace MoveFiles.Controllers
 
         #endregion
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+
+        public MainPageController()
+        {
+            timer = new System.Timers.Timer();
+            timer.Elapsed += Process;
+            timer.AutoReset = true;
+            timer.Enabled = false;
+        }
+
+
+
         private void UpdatePieChart()
         {
             var series = new SeriesCollection();
@@ -176,28 +193,6 @@ namespace MoveFiles.Controllers
         }
 
 
-
-
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-
-        public MainPageController()
-        {
-            timer = new System.Timers.Timer();
-            timer.Elapsed += Process;
-            timer.AutoReset = true;
-            timer.Enabled = false;
-        }
-
-       
-
-
         public void UpdateInputsUser(string regex, string origin, string destination, long checktime)
         {
             Regex = regex;
@@ -219,9 +214,6 @@ namespace MoveFiles.Controllers
             timer.Stop();
         }
 
-
-
-        
 
 
         #region CONTROLE_PROCSSO
@@ -460,24 +452,7 @@ namespace MoveFiles.Controllers
         #endregion
 
 
-
-
       
-
-
-
-
-        public void SaveConfigs()
-        {
-
-
-        }
-
-
-        public void LoadConfigs() { 
-        
-        
-        }
 
 
 
