@@ -1,13 +1,18 @@
-﻿using MoveFiles.Models;
+﻿using LiveCharts;
+using LiveCharts.Wpf;
+using MoveFiles.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -15,7 +20,7 @@ using System.Windows.Forms;
 
 namespace MoveFiles.Controllers
 {
-    public class MainPageController
+    public class MainPageController : INotifyPropertyChanged
     {
 
         private string Regex { get; set; }
@@ -25,18 +30,172 @@ namespace MoveFiles.Controllers
 
         private LogFile Log { get; set;}
         System.Timers.Timer timer;
-        
-        public MainPageController()
+
+        #region Dashboard_Properties
+        private int _quantidadeTransferida { get; set; }
+        public int QuantidadeTransferida
         {
 
-          
+            get { return _quantidadeTransferida; }
+            set
+            {
+                if (_quantidadeTransferida != value)
+                {
+                    _quantidadeTransferida = value;
+                    OnPropertyChanged();
+                }
+            }
+
+        }
+
+        private decimal _quantidadeTransferidaMbytes { get; set; }
+        public decimal QuantidadeTransferidaMbytes
+        {
+            get
+            {
+                return _quantidadeTransferidaMbytes;
+            }
+            set
+            {
+                _quantidadeTransferidaMbytes = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private SeriesCollection _pieCollection { get; set; }
+        public SeriesCollection PieCollection
+        {
+            get
+            {
+                return _pieCollection;
+            }
+            set
+            {
+                _pieCollection = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private SeriesCollection _columnCollection { get; set; }
+        public SeriesCollection ColumnCollection
+        {
+            get
+            {
+                return _columnCollection;
+            }
+            set
+            {
+                _columnCollection = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string[] _columnLabels { get; set; }
+        public string[] ColumnLabels
+        {
+            get { return _columnLabels;}
+            set
+            {
+                _columnLabels = value;
+                OnPropertyChanged();
+            }
+        }
+        private Func<double, string> _columnFormatter { get; set; }
+        public Func<double, string> ColumnFormatter
+        {
+            get { return _columnFormatter; }
+            set
+            {
+                _columnFormatter = value;
+            }
+        }
+
+        Func<ChartPoint, string> labelPoint = chartpoint => string.Format("{0:N2} Mb", chartpoint.Y);
+
+        #endregion
+
+        private void UpdatePieChart()
+        {
+            var series = new SeriesCollection();
+            var statistics = new LogStatistics(Log);
+            var dictTotalByExtension = statistics.TotalWeightByExtensions();
+
+            
+            foreach (var item in dictTotalByExtension)
+            {
+                System.Windows.Application.Current.Dispatcher.Invoke(() => {
+
+                    series.Add(new PieSeries()
+                    {
+                        Title = item.Key,
+                        Values = new ChartValues<decimal> { item.Value },
+                        DataLabels = true,
+                        LabelPoint = labelPoint
+                    });
+                });
+            }
+            PieCollection = series;
+        }
+
+
+        private void UpdateColumnChart()
+        {
+            var series = new SeriesCollection();
+            var statistics = new LogStatistics(Log);
+            var dictTotalByHour = statistics.TotalWeightByHour();
+
+            var auxValues = new List<decimal>();
+
+            for (int i = 0; i < 24; i++)
+            {
+                var key = i.ToString();
+
+                if (dictTotalByHour.ContainsKey(key))
+                {
+                    auxValues.Add(dictTotalByHour[key]);
+                }
+                else
+                {
+                    auxValues.Add(0);
+                }
+            }
+
+
+            System.Windows.Application.Current.Dispatcher.Invoke(() => {
+
+                series.Add(new ColumnSeries()
+                {
+                    Title = "Traffic Data",
+                    Values = new ChartValues<decimal> (auxValues.ToArray())
+                });
+            });
+
+            ColumnLabels = new string[] {"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16","17", "18", "19", "20", "21", "22", "23"};
+            ColumnFormatter = value => value.ToString("N");
+            ColumnCollection = series;
+        }
+
+
+
+
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+
+        public MainPageController()
+        {
             timer = new System.Timers.Timer();
             timer.Elapsed += Process;
             timer.AutoReset = true;
             timer.Enabled = false;
-
-            
         }
+
+       
 
 
         public void UpdateInputsUser(string regex, string origin, string destination, long checktime)
@@ -72,8 +231,12 @@ namespace MoveFiles.Controllers
             var statistics = new LogStatistics(Log);
             Debug.WriteLine("Quantidade total de arquivos transferidos: " + statistics.TotalFilesTransfer);
             Debug.WriteLine("Quantidade total de arquivos transferidos (MB): " + statistics.TotalFileSizeTransfer);
-            statistics.TotalWeightByExtensions();
-            statistics.TotalWeightByHour();
+
+            UpdatePieChart();
+            UpdateColumnChart();
+            QuantidadeTransferida = statistics.TotalFilesTransfer;
+            QuantidadeTransferidaMbytes = statistics.TotalFileSizeTransfer;
+
 
             // Se formulário é invalido, informar usuário
             if (!ValidateForm())
@@ -296,6 +459,10 @@ namespace MoveFiles.Controllers
 
         #endregion
 
+
+
+
+      
 
 
 

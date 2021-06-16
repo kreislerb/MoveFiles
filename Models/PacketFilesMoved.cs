@@ -48,7 +48,7 @@ namespace MoveFiles.Models
 
             foreach (var grupo in listaAgrupada)
             {
-                var TotalBytesByExtension = grupo.Sum(f => f.FileSize);
+                var TotalBytesByExtension = grupo.Sum(f => f.FileSize / 1024 / 1024);
                 FileSizeByExtension.Add(grupo.Key, TotalBytesByExtension);
              
             }
@@ -69,7 +69,7 @@ namespace MoveFiles.Models
 
             foreach (var grupo in listaAgrupada)
             {
-                var TotalBytesByHour = grupo.Sum(f => f.FileSize);
+                var TotalBytesByHour = grupo.Sum(f => f.FileSize / 1024 / 1024);
                 FileSizeByHour.Add(grupo.Key + "", TotalBytesByHour);
 
             }
