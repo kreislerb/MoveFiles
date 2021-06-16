@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:MoveFiles"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
-        Title="Move Files" Height="578.9" Width="1037.25" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        Title="Move Files" Height="578.9" Width="1037.25" WindowStartupLocation="CenterScreen" WindowState="Maximized" Closing="Window_Closing">
     <Grid>
 
         <StackPanel Grid.Column="0" HorizontalAlignment="Left" Background="#484848" Width="284"  VerticalAlignment="Stretch">
@@ -51,11 +51,7 @@
             </StackPanel>
 
 
-            <Button x:Name="btnStart" Margin="0,20"  Height="43" HorizontalAlignment="Center" Width="234" Style="{DynamicResource StartMenuButtons}" Cursor="Hand" Click="btnStart_Click">
-                <Button.Background>
-                    <ImageBrush ImageSource="/MoveFiles;component/Res/Images/butonStart.png"/>
-                </Button.Background>
-            </Button>
+            <Button x:Name="btnStart" Margin="0,20"  Height="43" HorizontalAlignment="Center" Width="234"  Cursor="Hand" Click="btnStart_Click" Background="#FFFF7600" Content="START" FontSize="20" FontWeight="Medium" Foreground="White"/>
 
         </StackPanel>
 
@@ -90,8 +86,8 @@
                         <lvc:Axis Title="Data Traffic (Mb)" FontSize="16" Margin="20, 0" LabelFormatter="{Binding Path=ColumnFormatter}" FontWeight="Bold"></lvc:Axis>
                     </lvc:CartesianChart.AxisY>
                 </lvc:CartesianChart>
-                
-                
+
+
             </StackPanel>
         </ScrollViewer>
 

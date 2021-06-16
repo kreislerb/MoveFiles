@@ -1,12 +1,11 @@
 ﻿using MoveFiles.Controllers;
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
-
+using System.Windows.Media;
 
 namespace MoveFiles
 {
@@ -18,6 +17,8 @@ namespace MoveFiles
         public MainWindow()
         {
             InitializeComponent();
+            LoadConfigs();
+
             controller = new MainPageController();
             this.DataContext = controller;
         }
@@ -80,11 +81,19 @@ namespace MoveFiles
             if (ProcesStarted)
             {
                 controller.Stop();
+                btnStart.Content = "START";
+                var converter = new System.Windows.Media.BrushConverter();
+                var brush = (Brush)converter.ConvertFromString("#FFFF7600");
+                btnStart.Background = brush;
                 ProcesStarted = false;
             }
             else
             {
                 controller.Start();
+                btnStart.Content = "STOP";
+                var converter = new System.Windows.Media.BrushConverter();
+                var brush = (Brush)converter.ConvertFromString("#DDFF0000");
+                btnStart.Background = brush;
                 ProcesStarted = true;
             }
 
@@ -93,6 +102,29 @@ namespace MoveFiles
 
         }
 
-       
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            SaveConfigs();
+        }
+
+        public void SaveConfigs()
+        {
+            Properties.Settings.Default.regex = tbRegex.Text;
+            Properties.Settings.Default.check_period = tbCheckFolderPeriod.Text;
+            Properties.Settings.Default.origin = tbFolderOrigin.Text;
+            Properties.Settings.Default.destination = tbFolderDestination.Text;
+
+            Properties.Settings.Default.Save();
+        }
+
+
+        public void LoadConfigs()
+        {
+            tbRegex.Text = Properties.Settings.Default.regex;
+            tbCheckFolderPeriod.Text = Properties.Settings.Default.check_period;
+            tbFolderOrigin.Text = Properties.Settings.Default.origin;
+            tbFolderDestination.Text = Properties.Settings.Default.destination;
+        }
+
     }
 }
