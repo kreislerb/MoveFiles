@@ -16,8 +16,8 @@ namespace MoveFiles.Models
         [JsonIgnore]
         public string FileExtension => string.IsNullOrEmpty(FileName) ? "Desconhecido" : FileName.Split('.')[1];
         public DateTime MovedTime { get; set; }
-
-
+        [JsonIgnore]
+        public int Hour => MovedTime.Hour;
 
     }
 

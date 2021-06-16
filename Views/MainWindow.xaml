@@ -4,58 +4,97 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MoveFiles"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
-        Title="Move Files" Height="638" Width="800" WindowStartupLocation="CenterScreen" WindowState="Maximized">
-	<Grid>
-		<StackPanel HorizontalAlignment="Left" Background="#484848" Width="284"  VerticalAlignment="Stretch">
-			<Label x:Name="label" HorizontalContentAlignment="Center" Content="Move Files" Foreground="#FFCCCCCC" FontWeight="Bold" FontSize="26"/>
-			<Label x:Name="labelInstructions" Margin="16,8,16,8" HorizontalContentAlignment="Left" Content="Instructions" Foreground="#FFCCCCCC" FontWeight="Light" FontSize="18"/>
+        Title="Move Files" Height="578.9" Width="1037.25" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+    <Grid>
 
-			<Label x:Name="labelRegex" Margin="20,0,16,0" HorizontalContentAlignment="Left" Content="Regex" Foreground="#FFCCCCCC" FontWeight="Normal" FontSize="12"/>
-			<StackPanel Orientation="Horizontal" Margin="22,0,22,8">
+        <StackPanel Grid.Column="0" HorizontalAlignment="Left" Background="#484848" Width="284"  VerticalAlignment="Stretch">
+            <Label x:Name="label" HorizontalContentAlignment="Center"  Margin="0,25,0,0" Content="Move Files" Foreground="#FFCCCCCC" FontWeight="Bold" FontSize="26"/>
+            <Label x:Name="labelInstructions" Visibility="Hidden" Margin="16,8,16,8" HorizontalContentAlignment="Left" Content="Instructions" Foreground="#FFCCCCCC" FontWeight="Light" FontSize="18"/>
 
-				<TextBox x:Name="tbRegex"  Height="30" Width="240" TextWrapping="Wrap"  VerticalContentAlignment="Center"/>
-			</StackPanel>
+            <Label x:Name="labelRegex" Margin="20,0,16,0" HorizontalContentAlignment="Left" Content="Regex" Foreground="#FFCCCCCC" FontWeight="Normal" FontSize="12"/>
+            <StackPanel Orientation="Horizontal" Margin="22,0,22,8">
 
-
-			<Label x:Name="labelCheckFolder" Margin="20,0,16,0" HorizontalContentAlignment="Left" Content="Check Folder Time (s)" Foreground="#FFCCCCCC" FontWeight="Normal" FontSize="12"/>
-			<StackPanel Orientation="Horizontal" Margin="22,0,22,8">
-				<Button x:Name="btnCheckFolderPeriod" Margin="0,0,8,0"  Height="32" HorizontalAlignment="Center" Width="32">
-					<Button.Background>
-						<ImageBrush ImageSource="/MoveFiles;component/Res/Images/hourglass.png"/>
-					</Button.Background>
-				</Button>
-				<TextBox x:Name="tbCheckFolderPeriod"  Height="30" Width="200" TextWrapping="Wrap"  VerticalContentAlignment="Center" />
-			</StackPanel>
-
-			<Label x:Name="labelFolderOrigin" Margin="20,0,16,0" HorizontalContentAlignment="Left" Content="Folder Origin" Foreground="#FFCCCCCC" FontWeight="Normal" FontSize="12"/>
-			<StackPanel Orientation="Horizontal" Margin="22,0,22,8">
-				<Button x:Name="btnFolderOrigin" Margin="0,0,8,0"  Height="32" HorizontalAlignment="Center" Width="32" Click="btnFolderOrigin_Click">
-					<Button.Background>
-						<ImageBrush ImageSource="/MoveFiles;component/Res/Images/folder.png"/>
-					</Button.Background>
-				</Button>
-				<TextBox x:Name="tbFolderOrigin"  Height="30" Width="200" TextWrapping="Wrap"  VerticalContentAlignment="Center"/>
-			</StackPanel>
-
-			<Label x:Name="labelFolderDestination" Margin="20,0,16,0" HorizontalContentAlignment="Left" Content="Folder Destination" Foreground="#FFCCCCCC" FontWeight="Normal" FontSize="12"/>
-			<StackPanel Orientation="Horizontal" Margin="22,0,22,8">
-				<Button x:Name="btnFolderDestination" Margin="0,0,8,0"  Height="32" HorizontalAlignment="Center" Width="32" Click="btnFolderDestination_Click">
-					<Button.Background>
-						<ImageBrush ImageSource="/MoveFiles;component/Res/Images/folder.png"/>
-					</Button.Background>
-				</Button>
-				<TextBox x:Name="tbFolderDestination"  Height="30" Width="200" TextWrapping="Wrap"  VerticalContentAlignment="Center"/>
-			</StackPanel>
+                <TextBox x:Name="tbRegex"  Height="30" Width="240" TextWrapping="Wrap"  VerticalContentAlignment="Center"/>
+            </StackPanel>
 
 
-			<Button x:Name="btnStart" Margin="0,20"  Height="43" HorizontalAlignment="Center" Width="234" Style="{DynamicResource StartMenuButtons}" Cursor="Hand" Click="btnStart_Click">
-				<Button.Background>
-					<ImageBrush ImageSource="/MoveFiles;component/Res/Images/butonStart.png"/>
-				</Button.Background>
-			</Button>
+            <Label x:Name="labelCheckFolder" Margin="20,0,16,0" HorizontalContentAlignment="Left" Content="Check Folder Time (s)" Foreground="#FFCCCCCC" FontWeight="Normal" FontSize="12"/>
+            <StackPanel Orientation="Horizontal" Margin="22,0,22,8">
+                <Button x:Name="btnCheckFolderPeriod" Margin="0,0,8,0"  Height="32" HorizontalAlignment="Center" Width="32">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/MoveFiles;component/Res/Images/hourglass.png"/>
+                    </Button.Background>
+                </Button>
+                <TextBox x:Name="tbCheckFolderPeriod"  Height="30" Width="200" TextWrapping="Wrap"  VerticalContentAlignment="Center" />
+            </StackPanel>
 
-		</StackPanel>
+            <Label x:Name="labelFolderOrigin" Margin="20,0,16,0" HorizontalContentAlignment="Left" Content="Folder Origin" Foreground="#FFCCCCCC" FontWeight="Normal" FontSize="12"/>
+            <StackPanel Orientation="Horizontal" Margin="22,0,22,8">
+                <Button x:Name="btnFolderOrigin" Margin="0,0,8,0"  Height="32" HorizontalAlignment="Center" Width="32" Click="btnFolderOrigin_Click">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/MoveFiles;component/Res/Images/folder.png"/>
+                    </Button.Background>
+                </Button>
+                <TextBox x:Name="tbFolderOrigin"  Height="30" Width="200" TextWrapping="Wrap"  VerticalContentAlignment="Center"/>
+            </StackPanel>
 
-	</Grid>
+            <Label x:Name="labelFolderDestination" Margin="20,0,16,0" HorizontalContentAlignment="Left" Content="Folder Destination" Foreground="#FFCCCCCC" FontWeight="Normal" FontSize="12"/>
+            <StackPanel Orientation="Horizontal" Margin="22,0,22,8">
+                <Button x:Name="btnFolderDestination" Margin="0,0,8,0"  Height="32" HorizontalAlignment="Center" Width="32" Click="btnFolderDestination_Click">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/MoveFiles;component/Res/Images/folder.png"/>
+                    </Button.Background>
+                </Button>
+                <TextBox x:Name="tbFolderDestination"  Height="30" Width="200" TextWrapping="Wrap"  VerticalContentAlignment="Center"/>
+            </StackPanel>
+
+
+            <Button x:Name="btnStart" Margin="0,20"  Height="43" HorizontalAlignment="Center" Width="234" Style="{DynamicResource StartMenuButtons}" Cursor="Hand" Click="btnStart_Click">
+                <Button.Background>
+                    <ImageBrush ImageSource="/MoveFiles;component/Res/Images/butonStart.png"/>
+                </Button.Background>
+            </Button>
+
+        </StackPanel>
+
+        <ScrollViewer Margin="284,0,0,0"  HorizontalScrollBarVisibility="Hidden"  VerticalScrollBarVisibility="Auto" Background="#FFFFF6E5"  >
+            <StackPanel>
+                <Label Content="Dashboard" Margin="25" FontSize="25" FontWeight="Light" Foreground="#555"/>
+
+                <lvc:PieChart  LegendLocation="Bottom" Margin="20,0,20,20"  Height="250" InnerRadius="50" Series="{Binding Path=PieCollection}" DisableAnimations="True"/>
+
+                <Grid Margin="20,20" Background="#FFE9B1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition Height="50"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Center">
+                        <Label Background="White"  VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" x:Name="lbQuantidadeTransferida_Copy" Content="{Binding QuantidadeTransferida}" FontSize="20"  Margin="0,10,30,0" Width="220"  />
+                        <Label Background="White" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Grid.Row="0" x:Name="lbQuantidadeTransferidaMbytes" Content="{Binding QuantidadeTransferidaMbytes, StringFormat=N2}"  FontSize="20" Margin="0,10,0,0" Width="220"  />
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
+                        <Label HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Width="220" Height="40" Content="Arquivos Transferidos"  Margin="0,0,30,0" FontSize="20" FontWeight="Normal" Foreground="#555"/>
+                        <Label  HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Width="220" Height="40" Content="Total Transferido (Mb)" Margin="0,0" FontSize="20" FontWeight="Normal" Foreground="#555"/>
+                    </StackPanel>
+                </Grid>
+
+                <lvc:CartesianChart  Margin="40, 20" Series="{Binding Path=ColumnCollection}" LegendLocation="Left" Height="250" DisableAnimations="True">
+                    <lvc:CartesianChart.AxisX>
+                        <lvc:Axis Title="Hours" FontSize="16" Margin="20, 0" FontWeight="Bold" Labels="{Binding Path=ColumnLabels}"></lvc:Axis>
+                    </lvc:CartesianChart.AxisX>
+                    <lvc:CartesianChart.AxisY>
+                        <lvc:Axis Title="Data Traffic (Mb)" FontSize="16" Margin="20, 0" LabelFormatter="{Binding Path=ColumnFormatter}" FontWeight="Bold"></lvc:Axis>
+                    </lvc:CartesianChart.AxisY>
+                </lvc:CartesianChart>
+                
+                
+            </StackPanel>
+        </ScrollViewer>
+
+
+    </Grid>
 </Window>

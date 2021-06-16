@@ -1,6 +1,9 @@
 ﻿using MoveFiles.Controllers;
 using System;
+using System.ComponentModel;
+using System.Drawing;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Forms;
 
@@ -15,16 +18,18 @@ namespace MoveFiles
         public MainWindow()
         {
             InitializeComponent();
-
-
-              
-
             controller = new MainPageController();
+            this.DataContext = controller;
         }
+
+       
+
+
 
         bool ProcesStarted = false;
         private MainPageController controller;
 
+        
 
         private void btnFolderOrigin_Click(object sender, RoutedEventArgs e)
         {
